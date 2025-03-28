@@ -60,6 +60,8 @@ def predict():
 
         return jsonify({"city": city, "risk_level": risk_level, "probability": int(prediction)})
     except Exception as e:
+        error_message = traceback.format_exc()  # Get full error
+        print(f"Error: {error_message}")  # Logs error in Render
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
