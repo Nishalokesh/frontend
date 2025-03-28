@@ -3,6 +3,9 @@ from flask_cors import CORS
 import psycopg2
 import joblib
 import numpy as np
+import os
+import traceback
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 CORS(app,origins=["https://frontdeployment.netlify.app"])
@@ -11,11 +14,18 @@ CORS(app,origins=["https://frontdeployment.netlify.app"])
 rf_model = joblib.load("cloudburst_rf_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
+# Database Configuration (Using Render DB Credentials)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://cloudburst_db_user:MWzRywc74qezZFfvbOdvViBn2ytb6MXV@dpg-cvj5vnuuk2gs73b26sv0-a/cloudburst_db")
+
+# Parse the database URL
+db_url = urlparse(DATABASE_URL)
+
 DB_CONFIG = {
-    "host": "localhost",
-    "dbname": "postgres",
-    "user": "postgres",
-    "password": "Nisha@84"
+    "dbname": db_url.path[1:],  # Extract database name
+    "user": db_url.username,
+    "password": db_url.password,
+    "host": db_url.hostname,
+    "port": db_url.port,
 }
 
 def connect_db():
