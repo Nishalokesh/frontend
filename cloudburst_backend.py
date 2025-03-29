@@ -26,10 +26,16 @@ DB_CONFIG = {
     "password": db_url.password,
     "host": db_url.hostname,
     "port": db_url.port,
+    "sslmode": "require"  # Important for Render DB
 }
 
 def connect_db():
-    return psycopg2.connect(**DB_CONFIG)
+   try:
+        conn = psycopg2.connect(**DB_CONFIG)
+        return conn
+    except Exception as e:
+        print(f"Database Connection Error: {e}")
+        return None
 
 @app.route("/")
 def home():
@@ -43,6 +49,9 @@ def predict():
     
     try:
         conn = connect_db()
+        if not conn:
+            return jsonify({"error": "Database connection failed"}), 500
+            
         cur = conn.cursor()
         cur.execute("SELECT temperature, humidity, pressure, wind_speed FROM weather WHERE city = %s", (city,))
         row = cur.fetchone()
