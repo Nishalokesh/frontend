@@ -29,7 +29,7 @@ function App() {
 
   useEffect(() => {
     if (activeView === "weather") {
-      axios.get("/api/weather").then((res) => {
+      axios.get("http://ec2-51-20-52-197.eu-north-1.compute.amazonaws.com:5000/api/weather").then((res) => {
         setWeatherData(res.data);
         // Check for high-risk cities and show toasts
       res.data.forEach((row) => {
@@ -46,7 +46,7 @@ function App() {
       });
     });
     } else if (activeView === "chart") {
-      axios.get("/api/stats").then((res) => {
+      axios.get("http://ec2-51-20-52-197.eu-north-1.compute.amazonaws.com:5000/api/stats").then((res) => {
         const formattedData = Object.entries(res.data).map(([name, value]) => ({
           name,
           value,
